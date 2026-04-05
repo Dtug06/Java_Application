@@ -1,0 +1,101 @@
+Bai 1:
+Đoạn code sai ở:
+public RechargeService() {
+    // Lỗi: Tự khởi tạo thủ công (Hard-code dependency)
+    this.gateway = new InternalPaymentGateway();
+}
+ Vấn đề 1:Class này phụ thuôc vào InternalPaymentGateway
+ Vấn đề 2: Vi phạm nguyên lý IoC
+
+
+Bai2:
+
+lỗi nằm ở : @Component=>  Khiến PlaySession trở thành Singleton
+
+
+Bai3:
+input :
+username: String   // tên người dùng
+foodName: String   // tên món (VD: "Mì xào bò")
+quantity: int      // số lượng
+
+output:
+"Gọi món thành công: Mì xào bò x2"
+
+Các bước xử lý logic – Module gọi đồ ăn
+
+- Nhận yêu cầu gọi món từ người dùng
+  + username
+  + foodName
+  + quantity
+
+- Kiểm tra món ăn có tồn tại trong kho không
+  + Nếu không tồn tại -> báo lỗi: "Món không tồn tại"
+
+- Lấy số lượng tồn kho của món
+  + Nếu stock == 0 hoặc < quantity
+    -> báo lỗi: "Món đã hết hàng"
+
+- Lấy giá của món ăn
+  + Tính tổng tiền:
+    total = price * quantity
+
+- Kiểm tra số dư tài khoản người dùng
+  + Nếu balance < total
+    -> báo lỗi: "Số dư không đủ"
+
+- Trừ tiền trong tài khoản
+  + Cập nhật số dư mới
+
+- Cập nhật lại kho
+  + Giảm số lượng món ăn đã đặt
+
+- Trả về kết quả thành công
+  + "Gọi món thành công: [foodName] x [quantity]"
+
+Lưu ý:
+- Kiểm tra theo thứ tự: kho -> tiền -> cập nhật
+- Nếu lỗi ở bước nào thì dừng ngay
+- Nên dùng transaction để đảm bảo dữ liệu không bị sai lệch
+
+
+Bai4 
+Giải pháp 1: Constructor Injection
+@Service
+public class NotificationService {
+
+    private final EmailSender emailSender;
+    private final SmsSender smsSender;
+
+    public NotificationService(EmailSender emailSender, SmsSender smsSender) {
+        this.emailSender = emailSender;
+        this.smsSender = smsSender;
+    }
+}
+
+Giải pháp 2: Field Injection
+@Service
+public class NotificationService {
+
+    @Autowired
+    private EmailSender emailSender;
+
+    @Autowired
+    private SmsSender smsSender;
+}
+
+
+So sánh : 
+Tiêu chí                | Constructor Injection             | Field Injection
+------------------------|-----------------------------------|----------------------------
+Tính rõ ràng            | Rõ dependency qua constructor     | Không rõ (ẩn trong field)
+Test (Unit Test)        | Dễ mock, dễ test                  | Khó test (phải dùng Spring)
+Tính bất biến           |  Có thể dùng final                | Không dùng final được
+Loose Coupling          | Tốt hơn                           | Kém hơn
+Khởi tạo object         | Bắt buộc có dependency            | Có thể thiếu mà không biết
+Debug lỗi               | Dễ phát hiện                      | Khó phát hiện
+Best Practice           | Được khuyến nghị                  | Không khuyến nghị
+
+
+
+
