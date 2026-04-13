@@ -43,6 +43,14 @@ dependencies {
     // Source: https://mvnrepository.com/artifact/org.springframework/spring-webmvc
     implementation("org.springframework:spring-webmvc:7.0.6")
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.0.0")
+        // Nếu dùng Jakarta Servlet 5
+        implementation 'org.apache.commons:commons-fileupload2-jakarta-servlet5:2.0.0-M5'
+
+        // Nếu dùng Jakarta Servlet 6
+        implementation 'org.apache.commons:commons-fileupload2-jakarta-servlet6:2.0.0-M5'
+
+        // Core module (tự động được kéo theo, nhưng có thể khai báo rõ ràng)
+        implementation 'org.apache.commons:commons-fileupload2-core:2.0.0-M5'
 
     //2. Thymeleaf
     // Source: https://mvnrepository.com/artifact/org.thymeleaf/thymeleaf-spring6
